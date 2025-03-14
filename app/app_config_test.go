@@ -6,32 +6,20 @@ import (
 	"os"
 	"reflect"
 	"testing"
-	"time"
 )
 
-func getExpectedConfig(storagePath string) *SchedulerConfig {
-	return &SchedulerConfig{
-		Buffer: request.BufferConfig{
-			PayloadStoragePath:         storagePath,
-			PayloadValidFor:            time.Hour * 24,
-			FailureRateMaxDelay:        time.Second * 1,
-			FailureRateBaseDelay:       time.Millisecond * 100,
-			RateLimitElementsPerSecond: 10,
-			RateLimitElementsBurst:     100,
-			Workers:                    10,
-		},
+func getExpectedConfig(username string) *ReceiverConfig {
+	return &ReceiverConfig{
 		CqlStore: request.AstraBundleConfig{
 			SecureConnectionBundleBase64: "base64value",
-			GatewayUser:                  "user",
+			GatewayUser:                  username,
 			GatewayPassword:              "password",
 		},
-		ResourceNamespace: "crystal",
-		KubeConfigPath:    "/tmp/nexus-test",
 	}
 }
 
 func Test_LoadConfig(t *testing.T) {
-	var expected = getExpectedConfig("s3://bucket/nexus/payloads")
+	var expected = getExpectedConfig("user")
 
 	var result = LoadConfig(context.TODO())
 	if !reflect.DeepEqual(*expected, result) {
@@ -40,8 +28,8 @@ func Test_LoadConfig(t *testing.T) {
 }
 
 func Test_LoadConfigFromEnv(t *testing.T) {
-	_ = os.Setenv("NEXUS__BUFFER.PAYLOAD_STORAGE_PATH", "s3://bucket-2/nexus/payloads")
-	var expected = getExpectedConfig("s3://bucket-2/nexus/payloads")
+	_ = os.Setenv("NEXUS__CQL_STORE.GATEWAY_USER", "dev")
+	var expected = getExpectedConfig("dev")
 
 	var result = LoadConfig(context.TODO())
 	if !reflect.DeepEqual(*expected, result) {

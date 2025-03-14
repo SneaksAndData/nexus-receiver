@@ -14,15 +14,11 @@ const (
 	EnvPrefix = "NEXUS_" // varnames will be NEXUS__MY_ENV_VAR
 )
 
-type SchedulerConfig struct {
-	Buffer              request.BufferConfig      `mapstructure:"buffer"`
-	CqlStore            request.AstraBundleConfig `mapstructure:"cql-store"`
-	ResourceNamespace   string                    `mapstructure:"resource-namespace"`
-	KubeConfigPath      string                    `mapstructure:"kube-config-path"`
-	ShardKubeConfigPath string                    `mapstructure:"shard-kube-config-path,omitempty"`
+type ReceiverConfig struct {
+	CqlStore request.AstraBundleConfig `mapstructure:"cql-store"`
 }
 
-func LoadConfig(ctx context.Context) SchedulerConfig {
+func LoadConfig(ctx context.Context) ReceiverConfig {
 	logger := klog.FromContext(ctx)
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.SetConfigFile(fmt.Sprintf("appconfig.%s.yaml", strings.ToLower(os.Getenv("APPLICATION_ENVIRONMENT"))))
@@ -34,7 +30,7 @@ func LoadConfig(ctx context.Context) SchedulerConfig {
 		klog.FlushAndExit(klog.ExitFlushTimeout, 1)
 	}
 
-	var appConfig SchedulerConfig
+	var appConfig ReceiverConfig
 	err := viper.Unmarshal(&appConfig)
 
 	if err != nil {

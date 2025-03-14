@@ -3,36 +3,35 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"github.com/SneaksAndData/nexus-core/pkg/signals"
 	"github.com/SneaksAndData/nexus-core/pkg/telemetry"
 	v1 "github.com/SneaksAndData/nexus-receiver/api/v1"
 	"github.com/SneaksAndData/nexus-receiver/app"
 	"github.com/gin-gonic/gin"
 	"k8s.io/klog/v2"
-)
-
-const (
-	MaxBodySize = 512 * 1024 * 1024
+	"strconv"
 )
 
 var (
 	logLevel string
+	bindPort int
 )
 
 func init() {
 	flag.StringVar(&logLevel, "log-level", "INFO", "Log level for the application.")
+	flag.IntVar(&bindPort, "bind-port", 8080, "Port to bind webhost on.")
 }
 
 func setupRouter(ctx context.Context) *gin.Engine {
-	// Disable Console Color
-	// gin.DisableConsoleColor()
+	gin.DisableConsoleColor()
 	router := gin.Default()
-	router.MaxMultipartMemory = MaxBodySize
 	router.Use(gin.Logger())
 	appConfig := app.LoadConfig(ctx)
 
 	appServices := (&app.ApplicationServices{}).
-		WithCqlStore(ctx, &appConfig.CqlStore)
+		WithCqlStore(ctx, &appConfig.CqlStore).
+		WithCompletionActor()
 
 	// version 1.2
 	apiV12 := router.Group("algorithm/v1.2")
@@ -70,5 +69,5 @@ func main() {
 
 	r := setupRouter(ctx)
 	// Configure webhost
-	_ = r.Run(":8080")
+	_ = r.Run(fmt.Sprintf(":%s", strconv.Itoa(bindPort)))
 }
