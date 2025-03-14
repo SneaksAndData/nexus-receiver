@@ -1,0 +1,67 @@
+package app
+
+import (
+	"fmt"
+	coremodels "github.com/SneaksAndData/nexus-core/pkg/checkpoint/models"
+	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
+	"github.com/SneaksAndData/nexus-core/pkg/pipeline"
+	"github.com/SneaksAndData/nexus-receiver/api/v1/models"
+	"time"
+)
+
+type CompletionActor = pipeline.DefaultPipelineStageActor[*models.CompletionInput, string]
+
+func NewCompletionActor(store *request.CqlStore) *CompletionActor {
+	return pipeline.NewDefaultPipelineStageActor[*models.CompletionInput, string](
+		"request_completion",
+		map[string]string{},
+		time.Second*1,
+		time.Second*5,
+		10,
+		100,
+		10,
+		func(element *models.CompletionInput) (string, error) {
+			return completeRequest(element, store)
+		},
+		nil,
+	)
+}
+
+func completeRequest(input *models.CompletionInput, cqlStore *request.CqlStore) (string, error) {
+	if input == nil {
+		return "", fmt.Errorf("buffer is nil")
+	}
+
+	requestToComplete, err := cqlStore.ReadCheckpoint(input.AlgorithmName, input.RequestId)
+
+	if err != nil {
+		return "", err
+	}
+
+	if requestToComplete.IsFinished() {
+		return requestToComplete.Id, nil
+	}
+
+	requestCopy := requestToComplete.DeepCopy()
+
+	if input.Result.Cause == "" {
+		requestCopy.LifecycleStage = coremodels.LifecyclestageCompleted
+		requestCopy.ResultUri = input.Result.SasUri
+
+		// TODO: metrics report
+	} else {
+		// TODO: metrics report
+		requestCopy.LifecycleStage = coremodels.LifecyclestageFailed
+		requestCopy.AlgorithmFailureCause = input.Result.Message
+		requestCopy.AlgorithmFailureDetails = input.Result.Cause
+		requestCopy.AlgorithmFailureCode = input.Result.ErrorCode
+	}
+
+	insertErr := cqlStore.UpsertCheckpoint(requestCopy)
+
+	if insertErr != nil {
+		return "", insertErr
+	}
+
+	return requestCopy.Id, nil
+}
