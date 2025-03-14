@@ -37,7 +37,7 @@ func setupRouter(ctx context.Context) *gin.Engine {
 	// version 1.2
 	apiV12 := router.Group("algorithm/v1.2")
 
-	apiV12.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CqlStore()))
+	apiV12.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor()))
 
 	go func() {
 		appServices.Start(ctx)
