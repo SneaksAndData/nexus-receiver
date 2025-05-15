@@ -104,8 +104,6 @@ spec:
           {{- end }}
         {{- end }}
           volumeMounts:
-          - name: shards-kube-config
-            mountPath: {{ .Values.receiver.config.shardKubeConfigPath }}
         {{- if .Values.datadog.enabled }}
           - name: dsdsocket
             mountPath: /var/run/datadog
@@ -119,9 +117,6 @@ spec:
           {{- toYaml . | nindent 12 }}
         {{- end }}
       volumes:
-        - name: shards-kube-config
-          secret:
-            secretName: {{ .Values.receiver.shardsConfigSecretName }}
        {{- if .Values.datadog.enabled }}
         - name: dsdsocket
           hostPath:
