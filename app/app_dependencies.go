@@ -39,5 +39,5 @@ func (appServices *ApplicationServices) CompletionActor() *CompletionActor {
 }
 
 func (appServices *ApplicationServices) Start(ctx context.Context) {
-	go appServices.completionActor.Start(ctx)
+	appServices.completionActor.Start(ctx)
 }
