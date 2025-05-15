@@ -3,13 +3,11 @@ package app
 import (
 	"context"
 	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
-	"k8s.io/client-go/tools/record"
 	"k8s.io/klog/v2"
 )
 
 type ApplicationServices struct {
 	cqlStore        *request.CqlStore
-	recorder        record.EventRecorder
 	completionActor *CompletionActor
 }
 
@@ -22,9 +20,9 @@ func (appServices *ApplicationServices) WithCqlStore(ctx context.Context, bundle
 	return appServices
 }
 
-func (appServices *ApplicationServices) WithCompletionActor() *ApplicationServices {
+func (appServices *ApplicationServices) WithCompletionActor(config *ReceiverConfig) *ApplicationServices {
 	if appServices.completionActor == nil {
-		appServices.completionActor = NewCompletionActor(appServices.cqlStore)
+		appServices.completionActor = NewCompletionActor(appServices.cqlStore, config)
 	}
 
 	return appServices

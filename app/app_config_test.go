@@ -3,35 +3,43 @@ package app
 import (
 	"context"
 	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
+	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
-func getExpectedConfig(username string) *ReceiverConfig {
+func getExpectedConfig() *ReceiverConfig {
 	return &ReceiverConfig{
 		CqlStore: request.AstraBundleConfig{
 			SecureConnectionBundleBase64: "base64value",
-			GatewayUser:                  username,
+			GatewayUser:                  "user",
 			GatewayPassword:              "password",
 		},
+		FailureRateBaseDelay:       time.Millisecond * 100,
+		FailureRateMaxDelay:        time.Second,
+		RateLimitElementsPerSecond: 10,
+		RateLimitElementsBurst:     100,
+		Workers:                    10,
 	}
 }
 
 func Test_LoadConfig(t *testing.T) {
-	var expected = getExpectedConfig("user")
+	var expected = getExpectedConfig()
 
-	var result = LoadConfig(context.TODO())
+	var result = nexusconf.LoadConfig[ReceiverConfig](context.TODO())
 	if !reflect.DeepEqual(*expected, result) {
 		t.Errorf("LoadConfig failed, expected %v, got %v", *expected, result)
 	}
 }
 
 func Test_LoadConfigFromEnv(t *testing.T) {
-	_ = os.Setenv("NEXUS__CQL_STORE.GATEWAY_USER", "dev")
-	var expected = getExpectedConfig("dev")
+	_ = os.Setenv("NEXUS__CQL_STORE__GATEWAY_PASSWORD", "password1")
+	var expected = getExpectedConfig()
+	expected.CqlStore.GatewayPassword = "password1"
 
-	var result = LoadConfig(context.TODO())
+	var result = nexusconf.LoadConfig[ReceiverConfig](context.TODO())
 	if !reflect.DeepEqual(*expected, result) {
 		t.Errorf("LoadConfig failed, expected %v, got %v", *expected, result)
 	}

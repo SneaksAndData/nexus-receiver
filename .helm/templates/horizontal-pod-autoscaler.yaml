@@ -1,0 +1,47 @@
+{{- if .Values.receiver.autoscaling.enabled -}}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "app.name" . }}
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+  {{- with .Values.additionalAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: {{ include "app.name" . }}
+    apiVersion: apps/v1
+  minReplicas: {{ .Values.receiver.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.receiver.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.receiver.autoscaling.targetMemoryAvg }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.receiver.autoscaling.targetCPUAvg }}
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: {{ .Values.receiver.autoscaling.scaleStabilizationWindowSeconds }}
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: {{ .Values.receiver.autoscaling.scaleByPercent }}
+          periodSeconds: {{ .Values.receiver.autoscaling.scalePeriodSeconds }}
+    scaleDown:
+      stabilizationWindowSeconds: {{ .Values.receiver.autoscaling.scaleStabilizationWindowSeconds }}
+      selectPolicy: Max
+      policies:
+        - type: Percent
+          value: {{ .Values.receiver.autoscaling.scaleByPercent }}
+          periodSeconds: {{ .Values.receiver.autoscaling.scalePeriodSeconds }}
+{{- end }}
