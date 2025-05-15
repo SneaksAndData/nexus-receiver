@@ -22,9 +22,9 @@ func (appServices *ApplicationServices) WithCqlStore(ctx context.Context, bundle
 	return appServices
 }
 
-func (appServices *ApplicationServices) WithCompletionActor() *ApplicationServices {
+func (appServices *ApplicationServices) WithCompletionActor(config *ReceiverConfig) *ApplicationServices {
 	if appServices.completionActor == nil {
-		appServices.completionActor = NewCompletionActor(appServices.cqlStore)
+		appServices.completionActor = NewCompletionActor(appServices.cqlStore, config)
 	}
 
 	return appServices

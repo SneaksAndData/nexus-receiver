@@ -6,20 +6,19 @@ import (
 	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
 	"github.com/SneaksAndData/nexus-core/pkg/pipeline"
 	"github.com/SneaksAndData/nexus-receiver/api/v1/models"
-	"time"
 )
 
 type CompletionActor = pipeline.DefaultPipelineStageActor[*models.CompletionInput, string]
 
-func NewCompletionActor(store *request.CqlStore) *CompletionActor {
+func NewCompletionActor(store *request.CqlStore, appConfig *ReceiverConfig) *CompletionActor {
 	return pipeline.NewDefaultPipelineStageActor[*models.CompletionInput, string](
 		"request_completion",
 		map[string]string{},
-		time.Second*1,
-		time.Second*5,
-		10,
-		100,
-		10,
+		appConfig.FailureRateBaseDelay,
+		appConfig.FailureRateMaxDelay,
+		appConfig.RateLimitElementsPerSecond,
+		appConfig.RateLimitElementsBurst,
+		appConfig.Workers,
 		func(element *models.CompletionInput) (string, error) {
 			return completeRequest(element, store)
 		},

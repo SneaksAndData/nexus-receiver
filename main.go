@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"flag"
+	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 	"github.com/SneaksAndData/nexus-core/pkg/signals"
 	"github.com/SneaksAndData/nexus-core/pkg/telemetry"
 	v1 "github.com/SneaksAndData/nexus-receiver/api/v1"
 	"github.com/SneaksAndData/nexus-receiver/app"
 	"github.com/gin-gonic/gin"
 	"k8s.io/klog/v2"
+	"os"
 )
 
 const (
@@ -24,15 +26,20 @@ func init() {
 }
 
 func setupRouter(ctx context.Context) *gin.Engine {
-	// Disable Console Color
-	// gin.DisableConsoleColor()
+	gin.DisableConsoleColor()
 	router := gin.Default()
 	router.MaxMultipartMemory = MaxBodySize
 	router.Use(gin.Logger())
-	appConfig := app.LoadConfig(ctx)
+	// disable trusted proxies check
+	_ = router.SetTrustedProxies(nil)
+	// set runtime mode
+	gin.SetMode(os.Getenv("GIN_MODE"))
+
+	appConfig := nexusconf.LoadConfig[app.ReceiverConfig](ctx)
 
 	appServices := (&app.ApplicationServices{}).
-		WithCqlStore(ctx, &appConfig.CqlStore)
+		WithCqlStore(ctx, &appConfig.CqlStore).
+		WithCompletionActor(&appConfig)
 
 	// version 1.2
 	apiV12 := router.Group("algorithm/v1.2")

@@ -1,0 +1,9 @@
+cql-store:
+  secure-connection-bundle-base64: ""
+  gateway-user: ""
+  gateway-password: ""
+failure-rate-base-delay: ""
+failure-rate-max-delay: ""
+rate-limit-elements-per-second: 1
+rate-limit-elements-burst: 1
+workers: 1

@@ -1,5 +1,6 @@
 package models
 
+// AlgorithmResult contains an optional URI to download results, and error information in case of a failed run.
 type AlgorithmResult struct {
 	// URL to download results.
 	SasUri string `json:"sasUri"`

@@ -1,7 +1,9 @@
-resource-namespace: nexus
 cql-store: # can be read from environment
   secure-connection-bundle-base64: base64value
   gateway-user: user
   gateway-password: password
-kube-config-path: "/tmp/test_cube"
-shard-kube-config-path: "/tmp/shards"
+failure-rate-base-delay: 100ms
+failure-rate-max-delay: 1s
+rate-limit-elements-per-second: 10
+rate-limit-elements-burst: 100
+workers: 10
