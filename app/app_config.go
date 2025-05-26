@@ -12,4 +12,6 @@ type ReceiverConfig struct {
 	RateLimitElementsPerSecond int                       `mapstructure:"rate-limit-elements-per-second,omitempty"`
 	RateLimitElementsBurst     int                       `mapstructure:"rate-limit-elements-burst,omitempty"`
 	Workers                    int                       `mapstructure:"workers,omitempty"`
+	LogLevel                   string                    `mapstructure:"log-level,omitempty"`
+	BindPort                   int                       `mapstructure:"bind-port,omitempty"`
 }

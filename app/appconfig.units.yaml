@@ -7,3 +7,5 @@ failure-rate-max-delay: 1s
 rate-limit-elements-per-second: 10
 rate-limit-elements-burst: 100
 workers: 10
+log-level: "INFO"
+bind-port: 8080

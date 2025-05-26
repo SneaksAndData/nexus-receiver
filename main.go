@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 	"github.com/SneaksAndData/nexus-core/pkg/signals"
@@ -15,17 +14,7 @@ import (
 	"strconv"
 )
 
-var (
-	logLevel string
-	bindPort int
-)
-
-func init() {
-	flag.StringVar(&logLevel, "log-level", "INFO", "Log level for the application.")
-	flag.IntVar(&bindPort, "bind-port", 8080, "Port to bind webhost on.")
-}
-
-func setupRouter(ctx context.Context) *gin.Engine {
+func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine {
 	gin.DisableConsoleColor()
 	router := gin.Default()
 	router.Use(gin.Logger())
@@ -34,11 +23,9 @@ func setupRouter(ctx context.Context) *gin.Engine {
 	// set runtime mode
 	gin.SetMode(os.Getenv("GIN_MODE"))
 
-	appConfig := nexusconf.LoadConfig[app.ReceiverConfig](ctx)
-
 	appServices := (&app.ApplicationServices{}).
 		WithCqlStore(ctx, &appConfig.CqlStore).
-		WithCompletionActor(&appConfig)
+		WithCompletionActor(appConfig)
 
 	// version 1.2
 	apiV12 := router.Group("algorithm/v1.2")
@@ -64,7 +51,8 @@ func setupRouter(ctx context.Context) *gin.Engine {
 
 func main() {
 	ctx := signals.SetupSignalHandler()
-	appLogger, err := telemetry.ConfigureLogger(ctx, map[string]string{}, logLevel)
+	appConfig := nexusconf.LoadConfig[app.ReceiverConfig](ctx)
+	appLogger, err := telemetry.ConfigureLogger(ctx, map[string]string{}, appConfig.LogLevel)
 	ctx = telemetry.WithStatsd(ctx, "nexus_receiver")
 	logger := klog.FromContext(ctx)
 
@@ -74,7 +62,7 @@ func main() {
 
 	klog.SetSlogLogger(appLogger)
 
-	r := setupRouter(ctx)
+	r := setupRouter(ctx, &appConfig)
 	// Configure webhost
-	_ = r.Run(fmt.Sprintf(":%s", strconv.Itoa(bindPort)))
+	_ = r.Run(fmt.Sprintf(":%s", strconv.Itoa(appConfig.BindPort)))
 }

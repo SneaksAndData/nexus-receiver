@@ -43,17 +43,16 @@ func completeRequest(input *models.CompletionInput, cqlStore *request.CqlStore) 
 
 	requestCopy := requestToComplete.DeepCopy()
 
-	if input.Result.Cause == "" {
-		requestCopy.LifecycleStage = coremodels.LifecyclestageCompleted
-		requestCopy.ResultUri = input.Result.SasUri
+	if input.Result.ErrorCause == "" {
+		requestCopy.LifecycleStage = coremodels.LifecycleStageCompleted
+		requestCopy.ResultUri = input.Result.ResultUri
 
 		// TODO: metrics report
 	} else {
 		// TODO: metrics report
-		requestCopy.LifecycleStage = coremodels.LifecyclestageFailed
-		requestCopy.AlgorithmFailureCause = input.Result.Message
-		requestCopy.AlgorithmFailureDetails = input.Result.Cause
-		requestCopy.AlgorithmFailureCode = input.Result.ErrorCode
+		requestCopy.LifecycleStage = coremodels.LifecycleStageFailed
+		requestCopy.AlgorithmFailureCause = input.Result.ErrorCause
+		requestCopy.AlgorithmFailureDetails = input.Result.ErrorDetails
 	}
 
 	insertErr := cqlStore.UpsertCheckpoint(requestCopy)
