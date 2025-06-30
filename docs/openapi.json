@@ -52,34 +52,25 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
                   }
                 }
               },
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
                   }
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
                   }
                 }
               }

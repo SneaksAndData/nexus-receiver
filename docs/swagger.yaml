@@ -34,11 +34,9 @@ paths:
         "202":
           description: Accepted
           schema:
-            items:
-              additionalProperties:
-                type: string
-              type: object
-            type: array
+            additionalProperties:
+              type: string
+            type: object
         "400":
           description: Bad Request
           schema:

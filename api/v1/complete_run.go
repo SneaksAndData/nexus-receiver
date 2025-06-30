@@ -17,7 +17,7 @@ import (
 //	@Produce		html
 //	@Param			algorithmName	path		string	true	"Request id of the run to complete"
 //	@Param			requestId	path		string	true	"Request id of the run to complete"
-//	@Success		202	{array}    map[string]string
+//	@Success		202	{object}    map[string]string
 //	@Failure		400	{string}	string
 //	@Failure		404	{string}	string
 //	@Failure		401	{string}	string
