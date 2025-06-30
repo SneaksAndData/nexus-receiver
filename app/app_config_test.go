@@ -22,6 +22,8 @@ func getExpectedConfig() *ReceiverConfig {
 		RateLimitElementsPerSecond: 10,
 		RateLimitElementsBurst:     100,
 		Workers:                    10,
+		LogLevel:                   "debug",
+		BindPort:                   8080,
 	}
 }
 
