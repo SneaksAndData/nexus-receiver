@@ -1,0 +1,57 @@
+basePath: /algorithm/v1.2
+info:
+  contact:
+    email: esdsupport@ecco.com
+    name: ESD Support
+  description: Nexus Receiver API specification. All Nexus supported clients conform
+    to this spec.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Nexus Receiver API
+  version: "1.0"
+paths:
+  /algorithm/v1.2/complete/{algorithmName}/requests/{requestId}:
+    get:
+      description: Commits the run result to the checkpoint store and transitions
+        the state to COMPLETED
+      parameters:
+      - description: Request id of the run to complete
+        in: path
+        name: algorithmName
+        required: true
+        type: string
+      - description: Request id of the run to complete
+        in: path
+        name: requestId
+        required: true
+        type: string
+      produces:
+      - application/json
+      - text/plain
+      - text/html
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            items:
+              additionalProperties:
+                type: string
+              type: object
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Completes the provided Nexus algorithm run
+      tags:
+      - results
+swagger: "2.0"
