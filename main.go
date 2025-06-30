@@ -49,6 +49,17 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	return router
 }
 
+// @title           Nexus Receiver API
+// @version         1.0
+// @description     Nexus Receiver API specification. All Nexus supported clients conform to this spec.
+
+// @contact.name   ESD Support
+// @contact.email  esdsupport@ecco.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath  /algorithm/v1.2
 func main() {
 	ctx := signals.SetupSignalHandler()
 	appConfig := nexusconf.LoadConfig[app.ReceiverConfig](ctx)

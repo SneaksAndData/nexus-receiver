@@ -1,0 +1,78 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Nexus Receiver API specification. All Nexus supported clients conform to this spec.",
+        "title": "Nexus Receiver API",
+        "contact": {
+            "name": "ESD Support",
+            "email": "esdsupport@ecco.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/algorithm/v1.2",
+    "paths": {
+        "/algorithm/v1.2/complete/{algorithmName}/requests/{requestId}": {
+            "get": {
+                "description": "Commits the run result to the checkpoint store and transitions the state to COMPLETED",
+                "produces": [
+                    "application/json",
+                    "text/plain",
+                    "text/html"
+                ],
+                "tags": [
+                    "results"
+                ],
+                "summary": "Completes the provided Nexus algorithm run",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Request id of the run to complete",
+                        "name": "algorithmName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Request id of the run to complete",
+                        "name": "requestId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
