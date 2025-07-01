@@ -17,11 +17,12 @@ import (
 //	@Produce		html
 //	@Param			algorithmName	path		string	true	"Request id of the run to complete"
 //	@Param			requestId	path		string	true	"Request id of the run to complete"
+//	@Param			payload	body		models.AlgorithmResult	true	"Run result"
 //	@Success		202	{object}    map[string]string
 //	@Failure		400	{string}	string
 //	@Failure		404	{string}	string
 //	@Failure		401	{string}	string
-//	@Router			/algorithm/v1.2/complete/{algorithmName}/requests/{requestId} [get]
+//	@Router			/algorithm/v1.2/complete/{algorithmName}/requests/{requestId} [post]
 func CompleteRun(actor *app.CompletionActor) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: log errors

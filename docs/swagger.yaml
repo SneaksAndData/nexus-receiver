@@ -1,4 +1,17 @@
 basePath: /algorithm/v1.2
+definitions:
+  models.AlgorithmResult:
+    properties:
+      errorCause:
+        description: Failure cause, if any.
+        type: string
+      errorDetails:
+        description: Failure details, if any.
+        type: string
+      resultUri:
+        description: URL to download results.
+        type: string
+    type: object
 info:
   contact:
     email: esdsupport@ecco.com
@@ -12,7 +25,7 @@ info:
   version: "1.0"
 paths:
   /algorithm/v1.2/complete/{algorithmName}/requests/{requestId}:
-    get:
+    post:
       description: Commits the run result to the checkpoint store and transitions
         the state to COMPLETED
       parameters:
@@ -26,6 +39,12 @@ paths:
         name: requestId
         required: true
         type: string
+      - description: Run result
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.AlgorithmResult'
       produces:
       - application/json
       - text/plain
