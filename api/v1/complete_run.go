@@ -12,6 +12,7 @@ import (
 //	@Summary		Completes the provided Nexus algorithm run
 //	@Description	Commits the run result to the checkpoint store and transitions the state to COMPLETED
 //	@Tags			results
+//	@Accept			json
 //	@Produce		json
 //	@Produce		plain
 //	@Produce		html

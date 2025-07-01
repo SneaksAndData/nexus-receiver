@@ -18,6 +18,9 @@
         "/algorithm/v1.2/complete/{algorithmName}/requests/{requestId}": {
             "post": {
                 "description": "Commits the run result to the checkpoint store and transitions the state to COMPLETED",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json",
                     "text/plain",
