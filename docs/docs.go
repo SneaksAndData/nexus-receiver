@@ -23,7 +23,7 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/algorithm/v1.2/complete/{algorithmName}/requests/{requestId}": {
-            "get": {
+            "post": {
                 "description": "Commits the run result to the checkpoint store and transitions the state to COMPLETED",
                 "produces": [
                     "application/json",
@@ -48,6 +48,15 @@ const docTemplate = `{
                         "name": "requestId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Run result",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AlgorithmResult"
+                        }
                     }
                 ],
                 "responses": {
@@ -78,6 +87,25 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.AlgorithmResult": {
+            "type": "object",
+            "properties": {
+                "errorCause": {
+                    "description": "Failure cause, if any.",
+                    "type": "string"
+                },
+                "errorDetails": {
+                    "description": "Failure details, if any.",
+                    "type": "string"
+                },
+                "resultUri": {
+                    "description": "URL to download results.",
+                    "type": "string"
                 }
             }
         }

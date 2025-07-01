@@ -20,7 +20,7 @@
   ],
   "paths": {
     "/algorithm/v1.2/complete/{algorithmName}/requests/{requestId}": {
-      "get": {
+      "post": {
         "tags": [
           "results"
         ],
@@ -46,6 +46,17 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "Run result",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/models.AlgorithmResult"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "202": {
             "description": "Accepted",
@@ -136,10 +147,31 @@
               }
             }
           }
+        },
+        "x-codegen-request-body-name": "payload"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "models.AlgorithmResult": {
+        "type": "object",
+        "properties": {
+          "errorCause": {
+            "type": "string",
+            "description": "Failure cause, if any."
+          },
+          "errorDetails": {
+            "type": "string",
+            "description": "Failure details, if any."
+          },
+          "resultUri": {
+            "type": "string",
+            "description": "URL to download results."
+          }
         }
       }
     }
   },
-  "components": {},
   "x-original-swagger-version": "2.0"
 }
