@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 	"github.com/SneaksAndData/nexus-core/pkg/signals"
@@ -23,8 +24,19 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	// set runtime mode
 	gin.SetMode(os.Getenv("GIN_MODE"))
 
-	appServices := (&app.ApplicationServices{}).
-		WithCqlStore(ctx, &appConfig.CqlStore).
+	appServices := &app.ApplicationServices{}
+
+	switch appConfig.CqlStoreType {
+	case app.CqlStoreAstra:
+		appServices = appServices.WithAstraCqlStore(ctx, &appConfig.AstraCqlStore)
+	case app.CqlStoreScylla:
+		appServices = appServices.WithScyllaCqlStore(ctx, &appConfig.ScyllaCqlStore)
+	default:
+		klog.FromContext(ctx).Error(errors.New("unknown store type "+appConfig.CqlStoreType), "failed to initialize a CqlStore")
+		klog.FlushAndExit(klog.ExitFlushTimeout, 1)
+	}
+
+	appServices = appServices.
 		WithCompletionActor(appConfig)
 
 	// version 1.2

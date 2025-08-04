@@ -12,11 +12,15 @@ import (
 
 func getExpectedConfig() *ReceiverConfig {
 	return &ReceiverConfig{
-		CqlStore: request.AstraBundleConfig{
+		AstraCqlStore: request.AstraBundleConfig{
 			SecureConnectionBundleBase64: "base64value",
 			GatewayUser:                  "user",
 			GatewayPassword:              "password",
 		},
+		ScyllaCqlStore: request.ScyllaCqlStoreConfig{
+			Hosts: []string{"host1", "host2"},
+		},
+		CqlStoreType:               CqlStoreAstra,
 		FailureRateBaseDelay:       time.Millisecond * 100,
 		FailureRateMaxDelay:        time.Second,
 		RateLimitElementsPerSecond: 10,
@@ -37,9 +41,9 @@ func Test_LoadConfig(t *testing.T) {
 }
 
 func Test_LoadConfigFromEnv(t *testing.T) {
-	_ = os.Setenv("NEXUS__CQL_STORE__GATEWAY_PASSWORD", "password1")
+	_ = os.Setenv("NEXUS__ASTRA_CQL_STORE__GATEWAY_PASSWORD", "password1")
 	var expected = getExpectedConfig()
-	expected.CqlStore.GatewayPassword = "password1"
+	expected.AstraCqlStore.GatewayPassword = "password1"
 
 	var result = nexusconf.LoadConfig[ReceiverConfig](context.TODO())
 	if !reflect.DeepEqual(*expected, result) {
