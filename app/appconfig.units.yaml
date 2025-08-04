@@ -1,7 +1,16 @@
-cql-store: # can be read from environment
+astra-cql-store: # can be read from environment
   secure-connection-bundle-base64: base64value
   gateway-user: user
   gateway-password: password
+scylla-cql-store:
+  hosts:
+    - host1
+    - host2
+  port: ""
+  user: ""
+  password: ""
+  local-dc: ""
+cql-store-type: astra
 failure-rate-base-delay: 100ms
 failure-rate-max-delay: 1s
 rate-limit-elements-per-second: 10
