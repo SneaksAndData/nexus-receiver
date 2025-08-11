@@ -23,7 +23,7 @@ import (
 //	@Failure		400	{string}	string
 //	@Failure		404	{string}	string
 //	@Failure		401	{string}	string
-//	@Router			/algorithm/v1.2/complete/{algorithmName}/requests/{requestId} [post]
+//	@Router			/algorithm/v1/complete/{algorithmName}/requests/{requestId} [post]
 func CompleteRun(actor *app.CompletionActor) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: log errors

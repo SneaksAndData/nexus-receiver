@@ -22,7 +22,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/algorithm/v1.2/complete/{algorithmName}/requests/{requestId}": {
+        "/algorithm/v1/complete/{algorithmName}/requests/{requestId}": {
             "post": {
                 "description": "Commits the run result to the checkpoint store and transitions the state to COMPLETED",
                 "consumes": [
@@ -119,7 +119,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "/algorithm/v1.2",
+	BasePath:         "/algorithm/v1",
 	Schemes:          []string{},
 	Title:            "Nexus Receiver API",
 	Description:      "Nexus Receiver API specification. All Nexus supported clients conform to this spec.",
