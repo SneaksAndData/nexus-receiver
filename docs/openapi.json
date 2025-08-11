@@ -15,11 +15,11 @@
   },
   "servers": [
     {
-      "url": "/algorithm/v1.2"
+      "url": "/algorithm/v1"
     }
   ],
   "paths": {
-    "/algorithm/v1.2/complete/{algorithmName}/requests/{requestId}": {
+    "/algorithm/v1/complete/{algorithmName}/requests/{requestId}": {
       "post": {
         "tags": [
           "results"

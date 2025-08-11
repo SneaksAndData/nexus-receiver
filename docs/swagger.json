@@ -13,9 +13,9 @@
         },
         "version": "1.0"
     },
-    "basePath": "/algorithm/v1.2",
+    "basePath": "/algorithm/v1",
     "paths": {
-        "/algorithm/v1.2/complete/{algorithmName}/requests/{requestId}": {
+        "/algorithm/v1/complete/{algorithmName}/requests/{requestId}": {
             "post": {
                 "description": "Commits the run result to the checkpoint store and transitions the state to COMPLETED",
                 "consumes": [

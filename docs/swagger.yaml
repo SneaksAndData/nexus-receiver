@@ -1,4 +1,4 @@
-basePath: /algorithm/v1.2
+basePath: /algorithm/v1
 definitions:
   models.AlgorithmResult:
     properties:
@@ -24,7 +24,7 @@ info:
   title: Nexus Receiver API
   version: "1.0"
 paths:
-  /algorithm/v1.2/complete/{algorithmName}/requests/{requestId}:
+  /algorithm/v1/complete/{algorithmName}/requests/{requestId}:
     post:
       consumes:
       - application/json
