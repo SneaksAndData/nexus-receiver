@@ -29,9 +29,9 @@ func (appServices *ApplicationServices) WithScyllaCqlStore(ctx context.Context, 
 	return appServices
 }
 
-func (appServices *ApplicationServices) WithCompletionActor(config *ReceiverConfig) *ApplicationServices {
+func (appServices *ApplicationServices) WithCompletionActor(ctx context.Context, config *ReceiverConfig) *ApplicationServices {
 	if appServices.completionActor == nil {
-		appServices.completionActor = NewCompletionActor(appServices.cqlStore, config)
+		appServices.completionActor = NewCompletionActor(ctx, appServices.cqlStore, config)
 	}
 
 	return appServices
@@ -46,5 +46,5 @@ func (appServices *ApplicationServices) CompletionActor() *CompletionActor {
 }
 
 func (appServices *ApplicationServices) Start(ctx context.Context) {
-	appServices.completionActor.Start(ctx)
+	appServices.completionActor.Start(ctx, nil)
 }
