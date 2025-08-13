@@ -60,7 +60,7 @@ func completeRequest(input *models.CompletionInput, cqlStore *request.CqlStore, 
 	}
 
 	// record run duration from receive to finish
-	telemetry.Gauge(metrics, "run_duration", time.Now().Sub(requestCopy.ReceivedAt).Seconds(), map[string]string{"algorithm": requestCopy.Algorithm, "final_stage": requestCopy.LifecycleStage}, 1)
+	telemetry.Gauge(metrics, "run_duration", time.Since(requestCopy.ReceivedAt).Seconds(), map[string]string{"algorithm": requestCopy.Algorithm, "final_stage": requestCopy.LifecycleStage}, 1)
 
 	insertErr := cqlStore.UpsertCheckpoint(requestCopy)
 
