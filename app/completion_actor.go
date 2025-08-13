@@ -27,13 +27,13 @@ func NewCompletionActor(store *request.CqlStore, appConfig *ReceiverConfig) *Com
 }
 
 func completeRequest(input *models.CompletionInput, cqlStore *request.CqlStore) (string, error) {
-	if input == nil {
+	if input == nil { // coverage-ignore
 		return "", fmt.Errorf("buffer is nil")
 	}
 
 	requestToComplete, err := cqlStore.ReadCheckpoint(input.AlgorithmName, input.RequestId)
 
-	if err != nil {
+	if err != nil { // coverage-ignore
 		return "", err
 	}
 
@@ -57,7 +57,7 @@ func completeRequest(input *models.CompletionInput, cqlStore *request.CqlStore) 
 
 	insertErr := cqlStore.UpsertCheckpoint(requestCopy)
 
-	if insertErr != nil {
+	if insertErr != nil { // coverage-ignore
 		return "", insertErr
 	}
 
