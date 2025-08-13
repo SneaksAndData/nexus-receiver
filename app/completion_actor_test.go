@@ -27,7 +27,7 @@ func newFixture(t *testing.T) *fixture {
 		klog.FromContext(ctx), &request.ScyllaCqlStoreConfig{
 			Hosts: []string{"127.0.0.1"},
 		})
-	f.actor = NewCompletionActor(f.cqlStore, &ReceiverConfig{
+	f.actor = NewCompletionActor(f.ctx, f.cqlStore, &ReceiverConfig{
 		AstraCqlStore:              request.AstraBundleConfig{},
 		ScyllaCqlStore:             request.ScyllaCqlStoreConfig{},
 		CqlStoreType:               "scylla",
