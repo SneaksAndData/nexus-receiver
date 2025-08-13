@@ -37,7 +37,7 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	}
 
 	appServices = appServices.
-		WithCompletionActor(appConfig)
+		WithCompletionActor(ctx, appConfig)
 
 	// version 1
 	apiV1 := router.Group("algorithm/v1")
