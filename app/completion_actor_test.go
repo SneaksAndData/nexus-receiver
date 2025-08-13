@@ -76,7 +76,7 @@ func TestCompletion(t *testing.T) {
 	}
 
 	for result := range results {
-		if result.Id == "f47ac10b-58cc-4372-a567-0e02b2c3d479" && (result.ResultUri == "http://localhost:9000/data" || result.LifecycleStage != coremodels.LifecycleStageCompleted) {
+		if result.Id == "f47ac10b-58cc-4372-a567-0e02b2c3d479" && (result.ResultUri != "http://localhost:9000/data" || result.LifecycleStage != coremodels.LifecycleStageCompleted) {
 			t.Errorf("expected a completed checkpoint with result url http://localhost:9000/data, but got result url: %s, lifecycle stage: %s", result.ResultUri, result.LifecycleStage)
 			t.FailNow()
 		}
