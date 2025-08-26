@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 	"github.com/SneaksAndData/nexus-core/pkg/signals"
@@ -23,14 +24,25 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	// set runtime mode
 	gin.SetMode(os.Getenv("GIN_MODE"))
 
-	appServices := (&app.ApplicationServices{}).
-		WithCqlStore(ctx, &appConfig.CqlStore).
-		WithCompletionActor(appConfig)
+	appServices := &app.ApplicationServices{}
 
-	// version 1.2
-	apiV12 := router.Group("algorithm/v1.2")
+	switch appConfig.CqlStoreType {
+	case app.CqlStoreAstra:
+		appServices = appServices.WithAstraCqlStore(ctx, &appConfig.AstraCqlStore)
+	case app.CqlStoreScylla:
+		appServices = appServices.WithScyllaCqlStore(ctx, &appConfig.ScyllaCqlStore)
+	default:
+		klog.FromContext(ctx).Error(errors.New("unknown store type "+appConfig.CqlStoreType), "failed to initialize a CqlStore")
+		klog.FlushAndExit(klog.ExitFlushTimeout, 1)
+	}
 
-	apiV12.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor()))
+	appServices = appServices.
+		WithCompletionActor(ctx, appConfig)
+
+	// version 1
+	apiV1 := router.Group("algorithm/v1")
+
+	apiV1.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor()))
 
 	go func() {
 		appServices.Start(ctx)
@@ -49,6 +61,17 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	return router
 }
 
+// @title           Nexus Receiver API
+// @version         1.0
+// @description     Nexus Receiver API specification. All Nexus supported clients conform to this spec.
+
+// @contact.name   ESD Support
+// @contact.email  esdsupport@ecco.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath  /algorithm/v1
 func main() {
 	ctx := signals.SetupSignalHandler()
 	appConfig := nexusconf.LoadConfig[app.ReceiverConfig](ctx)

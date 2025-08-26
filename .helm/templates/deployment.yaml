@@ -49,6 +49,8 @@ spec:
             - name: GIN_MODE
               value: {{ .Values.ginMode }}
           {{- if .Values.receiver.config.enabled }}
+            - name: NEXUS__CQL_STORE_TYPE
+              value: {{ .Values.receiver.config.cqlStore.type }} 
             - name: NEXUS__FAILURE_RATE_BASE_DELAY
               value: {{ .Values.receiver.config.failureRateBaseDelay }}
             - name: NEXUS__FAILURE_RATE_MAX_DELAY
