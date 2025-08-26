@@ -37,12 +37,12 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	}
 
 	appServices = appServices.
-		WithCompletionActor(appConfig)
+		WithCompletionActor(ctx, appConfig)
 
-	// version 1.2
-	apiV12 := router.Group("algorithm/v1.2")
+	// version 1
+	apiV1 := router.Group("algorithm/v1")
 
-	apiV12.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor()))
+	apiV1.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor()))
 
 	go func() {
 		appServices.Start(ctx)
@@ -71,7 +71,7 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @BasePath  /algorithm/v1.2
+// @BasePath  /algorithm/v1
 func main() {
 	ctx := signals.SetupSignalHandler()
 	appConfig := nexusconf.LoadConfig[app.ReceiverConfig](ctx)

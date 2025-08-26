@@ -3,7 +3,7 @@ module github.com/SneaksAndData/nexus-receiver
 go 1.24.4
 
 require (
-	github.com/SneaksAndData/nexus-core v1.2.2
+	github.com/SneaksAndData/nexus-core v1.3.3
 	github.com/gin-gonic/gin v1.10.0
 	github.com/swaggo/swag v1.16.4
 	k8s.io/klog/v2 v2.130.1
