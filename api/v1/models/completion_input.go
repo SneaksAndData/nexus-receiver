@@ -1,6 +1,6 @@
 package models
 
-// CompletionInput represents the payload sent to the run completion endpoint.
+// CompletionInput represents the data processed by completion actor
 type CompletionInput struct {
 	Result        AlgorithmResult
 	RequestId     string

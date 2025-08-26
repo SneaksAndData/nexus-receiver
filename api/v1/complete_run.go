@@ -7,6 +7,23 @@ import (
 	"net/http"
 )
 
+// CompleteRun godoc
+//
+//	@Summary		Completes the provided Nexus algorithm run
+//	@Description	Commits the run result to the checkpoint store and transitions the state to COMPLETED
+//	@Tags			results
+//	@Accept			json
+//	@Produce		json
+//	@Produce		plain
+//	@Produce		html
+//	@Param			algorithmName	path		string	true	"Request id of the run to complete"
+//	@Param			requestId	path		string	true	"Request id of the run to complete"
+//	@Param			payload	body		models.AlgorithmResult	true	"Run result"
+//	@Success		202	{object}    map[string]string
+//	@Failure		400	{string}	string
+//	@Failure		404	{string}	string
+//	@Failure		401	{string}	string
+//	@Router			/algorithm/v1/complete/{algorithmName}/requests/{requestId} [post]
 func CompleteRun(actor *app.CompletionActor) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// TODO: log errors

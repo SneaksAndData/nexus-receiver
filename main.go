@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"flag"
+	"errors"
 	"fmt"
 	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 	"github.com/SneaksAndData/nexus-core/pkg/signals"
@@ -15,17 +15,7 @@ import (
 	"strconv"
 )
 
-var (
-	logLevel string
-	bindPort int
-)
-
-func init() {
-	flag.StringVar(&logLevel, "log-level", "INFO", "Log level for the application.")
-	flag.IntVar(&bindPort, "bind-port", 8080, "Port to bind webhost on.")
-}
-
-func setupRouter(ctx context.Context) *gin.Engine {
+func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine {
 	gin.DisableConsoleColor()
 	router := gin.Default()
 	router.Use(gin.Logger())
@@ -34,16 +24,25 @@ func setupRouter(ctx context.Context) *gin.Engine {
 	// set runtime mode
 	gin.SetMode(os.Getenv("GIN_MODE"))
 
-	appConfig := nexusconf.LoadConfig[app.ReceiverConfig](ctx)
+	appServices := &app.ApplicationServices{}
 
-	appServices := (&app.ApplicationServices{}).
-		WithCqlStore(ctx, &appConfig.CqlStore).
-		WithCompletionActor(&appConfig)
+	switch appConfig.CqlStoreType {
+	case app.CqlStoreAstra:
+		appServices = appServices.WithAstraCqlStore(ctx, &appConfig.AstraCqlStore)
+	case app.CqlStoreScylla:
+		appServices = appServices.WithScyllaCqlStore(ctx, &appConfig.ScyllaCqlStore)
+	default:
+		klog.FromContext(ctx).Error(errors.New("unknown store type "+appConfig.CqlStoreType), "failed to initialize a CqlStore")
+		klog.FlushAndExit(klog.ExitFlushTimeout, 1)
+	}
 
-	// version 1.2
-	apiV12 := router.Group("algorithm/v1.2")
+	appServices = appServices.
+		WithCompletionActor(ctx, appConfig)
 
-	apiV12.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor()))
+	// version 1
+	apiV1 := router.Group("algorithm/v1")
+
+	apiV1.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor()))
 
 	go func() {
 		appServices.Start(ctx)
@@ -62,9 +61,21 @@ func setupRouter(ctx context.Context) *gin.Engine {
 	return router
 }
 
+// @title           Nexus Receiver API
+// @version         1.0
+// @description     Nexus Receiver API specification. All Nexus supported clients conform to this spec.
+
+// @contact.name   ESD Support
+// @contact.email  esdsupport@ecco.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath  /algorithm/v1
 func main() {
 	ctx := signals.SetupSignalHandler()
-	appLogger, err := telemetry.ConfigureLogger(ctx, map[string]string{}, logLevel)
+	appConfig := nexusconf.LoadConfig[app.ReceiverConfig](ctx)
+	appLogger, err := telemetry.ConfigureLogger(ctx, map[string]string{}, appConfig.LogLevel)
 	ctx = telemetry.WithStatsd(ctx, "nexus_receiver")
 	logger := klog.FromContext(ctx)
 
@@ -74,7 +85,7 @@ func main() {
 
 	klog.SetSlogLogger(appLogger)
 
-	r := setupRouter(ctx)
+	r := setupRouter(ctx, &appConfig)
 	// Configure webhost
-	_ = r.Run(fmt.Sprintf(":%s", strconv.Itoa(bindPort)))
+	_ = r.Run(fmt.Sprintf(":%s", strconv.Itoa(appConfig.BindPort)))
 }

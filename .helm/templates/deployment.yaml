@@ -37,9 +37,6 @@ spec:
       {{- end }}
       containers:
         - name: nexus
-          args:
-            - "log-level"
-            - {{ .Values.logging.level }}
         {{- with .Values.securityContext }}
           securityContext:
           {{- toYaml . | nindent 12 }}
@@ -52,6 +49,8 @@ spec:
             - name: GIN_MODE
               value: {{ .Values.ginMode }}
           {{- if .Values.receiver.config.enabled }}
+            - name: NEXUS__CQL_STORE_TYPE
+              value: {{ .Values.receiver.config.cqlStore.type }} 
             - name: NEXUS__FAILURE_RATE_BASE_DELAY
               value: {{ .Values.receiver.config.failureRateBaseDelay }}
             - name: NEXUS__FAILURE_RATE_MAX_DELAY
@@ -60,8 +59,12 @@ spec:
               value: {{ .Values.receiver.config.rateLimitElementsPerSecond | quote }}
             - name: NEXUS__RATE_LIMIT_ELEMENTS_BURST
               value: {{ .Values.receiver.config.rateLimitElementsBurst | quote }}
-            - name: NEXUS__CONFIG__WORKERS
+            - name: NEXUS__WORKERS
               value: {{ .Values.receiver.config.workers | quote }}
+            - name: NEXUS__LOG_LEVEL
+              value: {{ .Values.receiver.config.logLevel }}
+            - name: NEXUS__BIND_PORT
+              value: {{ .Values.receiver.config.bindPort | quote }}              
           {{- end }}
           {{- if .Values.datadog.enabled }}
             - name: DATADOG__API_KEY

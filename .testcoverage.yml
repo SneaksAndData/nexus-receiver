@@ -3,14 +3,17 @@ profile: cover.out
 local-prefix: "science.sneaksanddata.com/nexus"
 
 threshold:
-  file: 70
-  package: 70
-  total: 75
+  file: 80
+  package: 80
+  total: 85
       
 exclude:
   paths:
-    - \.pb\.go$           # excludes all protobuf generated files
-    - ^pkg/generated      # exclude generated code
-    - ^pkg/signals        # exclude signal handlers from sample controller
-    - hack/*.go           # exclude hack folder
-    - main.go             # exclude main file
+    - \.pb\.go$                                 # excludes all protobuf generated files
+    - ^pkg/generated                            # exclude generated code
+    - ^pkg/signals                              # exclude signal handlers from sample controller
+    - hack/*.go                                 # exclude hack folder
+    - main.go                                   # exclude main file
+    - ^api/v1                                   # exclude route handlers
+    - ^docs                                     # exclude Swagger code
+    - app/app_dependencies.go                   # do not test Nexus Core
