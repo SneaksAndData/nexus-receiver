@@ -1,0 +1,76 @@
+basePath: /algorithm/v1
+definitions:
+  models.AlgorithmResult:
+    properties:
+      errorCause:
+        description: Failure cause, if any.
+        type: string
+      errorDetails:
+        description: Failure details, if any.
+        type: string
+      resultUri:
+        description: URL to download results.
+        type: string
+    type: object
+info:
+  contact:
+    email: esdsupport@ecco.com
+    name: ESD Support
+  description: Nexus Receiver API specification. All Nexus supported clients conform
+    to this spec.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Nexus Receiver API
+  version: "1.0"
+paths:
+  /algorithm/v1/complete/{algorithmName}/requests/{requestId}:
+    post:
+      consumes:
+      - application/json
+      description: Commits the run result to the checkpoint store and transitions
+        the state to COMPLETED
+      parameters:
+      - description: Request id of the run to complete
+        in: path
+        name: algorithmName
+        required: true
+        type: string
+      - description: Request id of the run to complete
+        in: path
+        name: requestId
+        required: true
+        type: string
+      - description: Run result
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/models.AlgorithmResult'
+      produces:
+      - application/json
+      - text/plain
+      - text/html
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Completes the provided Nexus algorithm run
+      tags:
+      - results
+swagger: "2.0"

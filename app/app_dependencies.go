@@ -11,7 +11,7 @@ type ApplicationServices struct {
 	completionActor *CompletionActor
 }
 
-func (appServices *ApplicationServices) WithCqlStore(ctx context.Context, bundleConfig *request.AstraBundleConfig) *ApplicationServices {
+func (appServices *ApplicationServices) WithAstraCqlStore(ctx context.Context, bundleConfig *request.AstraBundleConfig) *ApplicationServices {
 	if appServices.cqlStore == nil {
 		logger := klog.FromContext(ctx)
 		appServices.cqlStore = request.NewAstraCqlStore(logger, bundleConfig)
@@ -20,9 +20,18 @@ func (appServices *ApplicationServices) WithCqlStore(ctx context.Context, bundle
 	return appServices
 }
 
-func (appServices *ApplicationServices) WithCompletionActor(config *ReceiverConfig) *ApplicationServices {
+func (appServices *ApplicationServices) WithScyllaCqlStore(ctx context.Context, config *request.ScyllaCqlStoreConfig) *ApplicationServices {
+	if appServices.cqlStore == nil {
+		logger := klog.FromContext(ctx)
+		appServices.cqlStore = request.NewScyllaCqlStore(logger, config)
+	}
+
+	return appServices
+}
+
+func (appServices *ApplicationServices) WithCompletionActor(ctx context.Context, config *ReceiverConfig) *ApplicationServices {
 	if appServices.completionActor == nil {
-		appServices.completionActor = NewCompletionActor(appServices.cqlStore, config)
+		appServices.completionActor = NewCompletionActor(ctx, appServices.cqlStore, config)
 	}
 
 	return appServices
@@ -37,5 +46,5 @@ func (appServices *ApplicationServices) CompletionActor() *CompletionActor {
 }
 
 func (appServices *ApplicationServices) Start(ctx context.Context) {
-	appServices.completionActor.Start(ctx)
+	appServices.completionActor.Start(ctx, nil)
 }
