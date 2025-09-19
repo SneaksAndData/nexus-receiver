@@ -96,10 +96,14 @@ securityContext: {}
 # Available values: debug, test, release
 ginMode: debug
 
-# Nexus Scheduler configurations
+# topology spread uses kubernetes.io/hostname
+topologySpread:
+  maxSkew: 1
+
+# Nexus Receiver configurations
 receiver:
   
-  # Number of scheduler replicas. Increase to support higher request rates
+  # Number of receiver replicas. Increase to support higher request rates
   replicas: 3
   
   # Disruption budget for the deployment
