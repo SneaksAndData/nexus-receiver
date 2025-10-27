@@ -54,10 +54,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "boolean"
-                            }
+                            "$ref": "#/definitions/models.CheckRunResponse"
                         }
                     },
                     "400": {
@@ -168,6 +165,14 @@ const docTemplate = `{
                 "resultUri": {
                     "description": "URL to download results.",
                     "type": "string"
+                }
+            }
+        },
+        "models.CheckRunResponse": {
+            "type": "object",
+            "properties": {
+                "is_processed": {
+                    "type": "boolean"
                 }
             }
         }

@@ -12,6 +12,11 @@ definitions:
         description: URL to download results.
         type: string
     type: object
+  models.CheckRunResponse:
+    properties:
+      is_processed:
+        type: boolean
+    type: object
 info:
   contact:
     email: esdsupport@ecco.com
@@ -46,9 +51,7 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: boolean
-            type: object
+            $ref: '#/definitions/models.CheckRunResponse'
         "400":
           description: Bad Request
           schema:

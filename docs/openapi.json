@@ -52,26 +52,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/models.CheckRunResponse"
                 }
               },
               "text/plain": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/models.CheckRunResponse"
                 }
               },
               "text/html": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/models.CheckRunResponse"
                 }
               }
             }
@@ -288,6 +279,14 @@
           "resultUri": {
             "type": "string",
             "description": "URL to download results."
+          }
+        }
+      },
+      "models.CheckRunResponse": {
+        "type": "object",
+        "properties": {
+          "is_processed": {
+            "type": "boolean"
           }
         }
       }

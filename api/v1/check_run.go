@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
+	"github.com/SneaksAndData/nexus-receiver/api/v1/models"
 	"github.com/gin-gonic/gin"
 	"k8s.io/klog/v2"
 	"net/http"
@@ -17,7 +18,7 @@ import (
 //	@Produce		html
 //	@Param			algorithmName	path		string	true	"Request id of the run to complete"
 //	@Param			requestId	path		string	true	"Request id of the run to complete"
-//	@Success		200	{object}    map[string]bool
+//	@Success		200	{object}    models.CheckRunResponse
 //	@Failure		400	{string}	string
 //	@Failure		404	{string}	string
 //	@Failure		401	{string}	string
@@ -39,8 +40,6 @@ func CheckRun(cqlStore *request.CqlStore, logger klog.Logger) gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusOK, map[string]bool{
-			"processed": requestToCheck.IsFinished(),
-		})
+		ctx.JSON(http.StatusOK, models.FromCheckpoint(requestToCheck))
 	}
 }
