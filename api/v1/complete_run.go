@@ -4,6 +4,7 @@ import (
 	"github.com/SneaksAndData/nexus-receiver/api/v1/models"
 	"github.com/SneaksAndData/nexus-receiver/app"
 	"github.com/gin-gonic/gin"
+	"k8s.io/klog/v2"
 	"net/http"
 )
 
@@ -24,14 +25,14 @@ import (
 //	@Failure		404	{string}	string
 //	@Failure		401	{string}	string
 //	@Router			/algorithm/v1/complete/{algorithmName}/requests/{requestId} [post]
-func CompleteRun(actor *app.CompletionActor) gin.HandlerFunc {
+func CompleteRun(actor *app.CompletionActor, logger klog.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// TODO: log errors
 		algorithmName := ctx.Param("algorithmName")
 		requestId := ctx.Param("requestId")
 		var result models.AlgorithmResult
 
 		if err := ctx.ShouldBindJSON(&result); err != nil {
+			logger.V(0).Error(err, "invalid request body", "requestId", requestId, "algorithmName", algorithmName)
 			ctx.String(http.StatusBadRequest, `Submitted result is invalid: %s`, err.Error())
 			return
 		}
