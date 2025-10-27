@@ -19,6 +19,117 @@
     }
   ],
   "paths": {
+    "/algorithm/v1/check/{algorithmName}/requests/{requestId}": {
+      "get": {
+        "tags": [
+          "results"
+        ],
+        "summary": "Verifies the run has been modified by receiver.",
+        "description": "Checks if one of the completion statuses has been assigned by receiver.",
+        "parameters": [
+          {
+            "name": "algorithmName",
+            "in": "path",
+            "description": "Request id of the run to complete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "description": "Request id of the run to complete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/models.CheckRunResponse"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/models.CheckRunResponse"
+                }
+              },
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/models.CheckRunResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/algorithm/v1/complete/{algorithmName}/requests/{requestId}": {
       "post": {
         "tags": [
@@ -168,6 +279,14 @@
           "resultUri": {
             "type": "string",
             "description": "URL to download results."
+          }
+        }
+      },
+      "models.CheckRunResponse": {
+        "type": "object",
+        "properties": {
+          "is_processed": {
+            "type": "boolean"
           }
         }
       }

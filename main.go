@@ -25,6 +25,7 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	gin.SetMode(os.Getenv("GIN_MODE"))
 
 	appServices := &app.ApplicationServices{}
+	logger := klog.FromContext(ctx)
 
 	switch appConfig.CqlStoreType {
 	case app.CqlStoreAstra:
@@ -42,7 +43,8 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	// version 1
 	apiV1 := router.Group("algorithm/v1")
 
-	apiV1.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor()))
+	apiV1.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor(), logger))
+	apiV1.GET("check/:algorithmName/requests/:requestId", v1.CheckRun(appServices.CqlStore(), logger))
 
 	go func() {
 		appServices.Start(ctx)

@@ -22,6 +22,62 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/algorithm/v1/check/{algorithmName}/requests/{requestId}": {
+            "get": {
+                "description": "Checks if one of the completion statuses has been assigned by receiver.",
+                "produces": [
+                    "application/json",
+                    "text/plain",
+                    "text/html"
+                ],
+                "tags": [
+                    "results"
+                ],
+                "summary": "Verifies the run has been modified by receiver.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Request id of the run to complete",
+                        "name": "algorithmName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Request id of the run to complete",
+                        "name": "requestId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.CheckRunResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/algorithm/v1/complete/{algorithmName}/requests/{requestId}": {
             "post": {
                 "description": "Commits the run result to the checkpoint store and transitions the state to COMPLETED",
@@ -109,6 +165,14 @@ const docTemplate = `{
                 "resultUri": {
                     "description": "URL to download results.",
                     "type": "string"
+                }
+            }
+        },
+        "models.CheckRunResponse": {
+            "type": "object",
+            "properties": {
+                "is_processed": {
+                    "type": "boolean"
                 }
             }
         }
