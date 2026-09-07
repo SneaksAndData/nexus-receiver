@@ -24,7 +24,7 @@ import (
 //	@Failure		404	{string}	string
 //	@Failure		401	{string}	string
 //	@Router			/algorithm/v1/check/{algorithmName}/requests/{requestId} [get]
-func CheckRun(cqlStore *store.CheckpointStore, logger klog.Logger) gin.HandlerFunc {
+func CheckRun(cqlStore store.CheckpointStore, logger klog.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		algorithmName := ctx.Param("algorithmName")
 		requestId := ctx.Param("requestId")

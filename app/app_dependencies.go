@@ -9,14 +9,14 @@ import (
 )
 
 type ApplicationServices struct {
-	cqlStore        *store.CheckpointStore
+	cqlStore        store.CheckpointStore
 	completionActor *CompletionActor
 }
 
 func (appServices *ApplicationServices) WithAstraCqlStore(ctx context.Context, bundleConfig *cassandra.AstraBundleConfig) *ApplicationServices {
 	if appServices.cqlStore == nil {
 		logger := klog.FromContext(ctx)
-		appServices.cqlStore = new(cassandra.NewAstraStore(logger, bundleConfig))
+		appServices.cqlStore = cassandra.NewAstraStore(logger, bundleConfig)
 	}
 
 	return appServices
@@ -25,7 +25,7 @@ func (appServices *ApplicationServices) WithAstraCqlStore(ctx context.Context, b
 func (appServices *ApplicationServices) WithScyllaCqlStore(ctx context.Context, config *cassandra.ScyllaConfig) *ApplicationServices {
 	if appServices.cqlStore == nil {
 		logger := klog.FromContext(ctx)
-		appServices.cqlStore = new(cassandra.NewScyllaStore(logger, config))
+		appServices.cqlStore = cassandra.NewScyllaStore(logger, config)
 	}
 
 	return appServices
@@ -34,7 +34,7 @@ func (appServices *ApplicationServices) WithScyllaCqlStore(ctx context.Context, 
 func (appServices *ApplicationServices) WithKeyspacesCqlStore(ctx context.Context, config *cassandra.KeyspacesConfig) *ApplicationServices {
 	if appServices.cqlStore == nil {
 		logger := klog.FromContext(ctx)
-		appServices.cqlStore = new(cassandra.NewKeyspacesStore(logger, config))
+		appServices.cqlStore = cassandra.NewKeyspacesStore(logger, config)
 	}
 
 	return appServices
@@ -48,7 +48,7 @@ func (appServices *ApplicationServices) WithCompletionActor(ctx context.Context,
 	return appServices
 }
 
-func (appServices *ApplicationServices) CheckpointStore() *store.CheckpointStore {
+func (appServices *ApplicationServices) CheckpointStore() store.CheckpointStore {
 	return appServices.cqlStore
 }
 

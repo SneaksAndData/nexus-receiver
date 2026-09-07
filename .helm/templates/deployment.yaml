@@ -57,7 +57,7 @@ spec:
               value: {{ .Values.ginMode }}
           {{- if .Values.receiver.config.enabled }}
             - name: NEXUS__CQL_STORE_TYPE
-              value: {{ .Values.receiver.config.cqlStore.type }} 
+              value: {{ .Values.receiver.config.checkpointStore.type }}
             - name: NEXUS__FAILURE_RATE_BASE_DELAY
               value: {{ .Values.receiver.config.failureRateBaseDelay }}
             - name: NEXUS__FAILURE_RATE_MAX_DELAY
@@ -115,9 +115,9 @@ spec:
           {{- end }}
         {{- if .Values.extraEnvFrom }}
           envFrom:          
-          {{- if .Values.receiver.config.cqlStore.secretRefEnabled }}
+          {{- if .Values.receiver.config.checkpointStore.secretRefEnabled }}
             - secretRef:
-                name: {{ .Values.receiver.config.cqlStore.secretName }}
+                name: {{ required .Values.receiver.config.checkpointStore.secretName }}
           {{- end }}
           {{- with .Values.extraEnvFrom }}
             {{- toYaml . | nindent 12 }}
