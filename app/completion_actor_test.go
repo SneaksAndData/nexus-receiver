@@ -2,19 +2,21 @@ package app
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	coremodels "github.com/SneaksAndData/nexus-core/pkg/checkpoint/models"
-	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
+	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/store"
+	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/store/cassandra"
 	"github.com/SneaksAndData/nexus-core/pkg/pipeline"
 	"github.com/SneaksAndData/nexus-receiver/api/v1/models"
 	"k8s.io/klog/v2"
 	"k8s.io/klog/v2/ktesting"
-	"testing"
-	"time"
 )
 
 type fixture struct {
 	actor    *CompletionActor
-	cqlStore *request.CqlStore
+	cqlStore store.CheckpointStore
 	ctx      context.Context
 }
 
@@ -23,13 +25,13 @@ func newFixture(t *testing.T) *fixture {
 	f := &fixture{}
 
 	f.ctx = ctx
-	f.cqlStore = request.NewScyllaCqlStore(
-		klog.FromContext(ctx), &request.ScyllaCqlStoreConfig{
+	f.cqlStore = cassandra.NewScyllaStore(
+		klog.FromContext(ctx), &cassandra.ScyllaConfig{
 			Hosts: []string{"127.0.0.1"},
 		})
 	f.actor = NewCompletionActor(f.ctx, f.cqlStore, &ReceiverConfig{
-		AstraCqlStore:              request.AstraBundleConfig{},
-		ScyllaCqlStore:             request.ScyllaCqlStoreConfig{},
+		AstraCqlStore:              cassandra.AstraBundleConfig{},
+		ScyllaCqlStore:             cassandra.ScyllaConfig{},
 		CqlStoreType:               "scylla",
 		FailureRateBaseDelay:       time.Second,
 		FailureRateMaxDelay:        time.Second * 2,

@@ -13,6 +13,23 @@ helm install nexus-receiver --namespace nexus --create-namespace oci://ghcr.io/s
 --set ginMode=release
 ```
 
+### Development
+
+Common development tasks are managed via [`just`](https://github.com/casey/just). Run `just` or `just --list` to see available recipes:
+
+```shell
+just --list
+```
+
+Available recipes:
+- `just build`: build application binaries
+- `just compose-up`: launch dependencies via Docker Compose
+- `just compose-down`: tear down Docker Compose dependencies
+- `just up`: build binaries and start Docker Compose dependencies
+- `just stop`: stop Docker Compose dependencies
+- `just fresh`: restart fresh by running `stop` then `up`
+- `just test`: run unit tests with coverage profile
+
 ### API Management
 Adding new API paths must be reflected in Swagger docs, even though the app doesn't serve Swagger. Update the generated docs:
 ```shell
