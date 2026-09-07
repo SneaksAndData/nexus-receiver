@@ -2,19 +2,23 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
+
 	"github.com/DataDog/datadog-go/v5/statsd"
 	coremodels "github.com/SneaksAndData/nexus-core/pkg/checkpoint/models"
-	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
+	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/store"
 	"github.com/SneaksAndData/nexus-core/pkg/pipeline"
 	"github.com/SneaksAndData/nexus-core/pkg/telemetry"
 	"github.com/SneaksAndData/nexus-receiver/api/v1/models"
+	"k8s.io/klog/v2"
+
 	"time"
 )
 
 type CompletionActor = pipeline.DefaultPipelineStageActor[*models.CompletionInput, string]
 
-func NewCompletionActor(ctx context.Context, store *request.CqlStore, appConfig *ReceiverConfig) *CompletionActor {
+func NewCompletionActor(ctx context.Context, checkpointStore *store.CheckpointStore, appConfig *ReceiverConfig) *CompletionActor {
 	return pipeline.NewDefaultPipelineStageActor[*models.CompletionInput, string](
 		"request_completion",
 		map[string]string{},
@@ -24,13 +28,18 @@ func NewCompletionActor(ctx context.Context, store *request.CqlStore, appConfig 
 		appConfig.RateLimitElementsBurst,
 		appConfig.Workers,
 		func(element *models.CompletionInput) (string, error) {
-			return completeRequest(element, store, telemetry.GetClient(ctx))
+			return completeRequest(element, checkpointStore, telemetry.GetClient(ctx))
+		},
+		func(element *models.CompletionInput) {
+			logger := klog.FromContext(ctx)
+			logger.V(0).Error(errors.New("unable to complete provided request"), "Failed to complete request - will mark submission as failed", "requestId", element.RequestId, "template", element.AlgorithmName)
+
 		},
 		nil,
 	)
 }
 
-func completeRequest(input *models.CompletionInput, cqlStore *request.CqlStore, metrics *statsd.Client) (string, error) {
+func completeRequest(input *models.CompletionInput, cqlStore *store.CheckpointStore, metrics *statsd.Client) (string, error) {
 	if input == nil { // coverage-ignore
 		return "", fmt.Errorf("buffer is nil")
 	}
