@@ -203,7 +203,9 @@ receiver:
       #    KEYSPACES_AWS_SECRET_ACCESS_KEY: secret
       #  type: Opaque
       #
+
       # Helm chart will create a separate ConfigMap `nexus-keyspaces-ca` which contains public certificate you must use when `type` is `keyspaces`.
+      deployKeyspacesCertificates: false
 
       secretName:
       

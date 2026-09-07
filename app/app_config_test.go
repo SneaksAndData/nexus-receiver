@@ -24,7 +24,12 @@ func getExpectedConfig() *ReceiverConfig {
 			IndexesSupported: true,
 		},
 		KeyspacesCqlStore: cassandra.KeyspacesConfig{
-			Keyspace: "keyspace",
+			Keyspace: "nexus",
+			Hosts:    []string{"keyspaces.aws.com"},
+			Port:     "9042",
+			CaPath:   "/tmp/ca",
+			Region:   "us-east-1",
+			UseIRSA:  false,
 		},
 		CqlStoreType:               CqlStoreAstra,
 		FailureRateBaseDelay:       time.Millisecond * 100,

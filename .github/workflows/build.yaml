@@ -36,20 +36,18 @@ jobs:
       - name: Run go vet
         run: go vet ./...
         
-      - name: Build
-        run: just build
+      - name: Build and activate CI stack
+        run: just up
         
       - name: Lint
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1.0
 
-      - name: Launch Compose Stack
-        run: just compose-up
-
-      - name: Get Compose Logs
-        if: always()
-        run: docker compose logs
+# uncomment when debugging actions
+#      - name: Get Compose Logs
+#        if: always()
+#        run: docker compose logs
 
       - name: Test
         run: just test
