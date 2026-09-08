@@ -27,12 +27,13 @@ func newFixture(t *testing.T) *fixture {
 	f.ctx = ctx
 	f.cqlStore = cassandra.NewScyllaStore(
 		klog.FromContext(ctx), &cassandra.ScyllaConfig{
-			Hosts: []string{"127.0.0.1"},
+			Hosts:    []string{"127.0.0.1"},
+			Keyspace: "nexus",
 		})
 	f.actor = NewCompletionActor(f.ctx, f.cqlStore, &ReceiverConfig{
 		AstraCqlStore:              cassandra.AstraBundleConfig{},
 		ScyllaCqlStore:             cassandra.ScyllaConfig{},
-		CqlStoreType:               "scylla",
+		CqlStoreType:               "cassandra-scylla",
 		FailureRateBaseDelay:       time.Second,
 		FailureRateMaxDelay:        time.Second * 2,
 		RateLimitElementsPerSecond: 10,

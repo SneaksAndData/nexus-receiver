@@ -1,4 +1,4 @@
-{{- if and eq .Values.receiver.config.checkpointStore.type "cassandra-keyspaces" eq .Values.receiver.config.checkpointStore.deployKeyspacesCertificates true -}}
+{{- if and (eq .Values.receiver.config.checkpointStore.type "cassandra-keyspaces") (eq .Values.receiver.config.checkpointStore.deployKeyspacesCertificates true) -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:

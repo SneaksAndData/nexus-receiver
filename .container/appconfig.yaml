@@ -8,7 +8,14 @@ scylla-cql-store:
   user: ""
   password: ""
   local-dc: ""
-cql-store-type: scylla
+keyspaces-cql-store:
+  hosts: []
+  port: ""
+  ca-path: ""
+  region: ""
+  keyspace: ""
+  use-irsa: false
+cql-store-type: cassandra-scylla
 failure-rate-base-delay: ""
 failure-rate-max-delay: ""
 rate-limit-elements-per-second: 1
