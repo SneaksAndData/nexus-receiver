@@ -3,6 +3,7 @@ astra-cql-store: # can be read from environment
   gateway-user: user
   gateway-password: password
   indexes-supported: false
+  keyspace: "nexus"
 scylla-cql-store:
   hosts:
     - host1
@@ -12,6 +13,7 @@ scylla-cql-store:
   password: ""
   local-dc: ""
   indexes-supported: true
+  keyspace: "nexus"
 keyspaces-cql-store:
   hosts:
     - keyspaces.aws.com

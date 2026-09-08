@@ -35,11 +35,11 @@ test:
 test-all:
     mkdir -p "$PWD/coverdir"
     @echo "==> Running tests with INDEXES_SUPPORTED=true"
-    APPLICATION_ENVIRONMENT=units go test -v ./... -coverprofile="$PWD/coverdir/cover-indexed.out" -covermode=atomic -coverpkg=./...
+    APPLICATION_ENVIRONMENT=units SCYLLA_STORE_LOCAL_ONLY=1 go test -v ./... -coverprofile="$PWD/coverdir/cover-indexed.out" -covermode=atomic -coverpkg=./...
     @echo "==> Switching to INDEXES_SUPPORTED=false"
     just switch-store-indexes "false"
     @echo "==> Running tests with INDEXES_SUPPORTED=false"
-    APPLICATION_ENVIRONMENT=units go test -v ./... -coverprofile="$PWD/coverdir/cover-bare.out" -covermode=atomic -coverpkg=./...
+    APPLICATION_ENVIRONMENT=units SCYLLA_STORE_LOCAL_ONLY=1 go test -v ./... -coverprofile="$PWD/coverdir/cover-bare.out" -covermode=atomic -coverpkg=./...
     @echo "==> Merging coverage profiles into cover.out"
     go run github.com/wadey/gocovmerge@latest "$PWD/coverdir/cover-indexed.out" "$PWD/coverdir/cover-bare.out" > "$PWD/cover.out"
 

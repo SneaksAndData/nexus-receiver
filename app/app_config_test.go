@@ -18,10 +18,12 @@ func getExpectedConfig() *ReceiverConfig {
 			GatewayUser:                  "user",
 			GatewayPassword:              "password",
 			IndexesSupported:             false,
+			Keyspace:                     "nexus",
 		},
 		ScyllaCqlStore: cassandra.ScyllaConfig{
 			Hosts:            []string{"host1", "host2"},
 			IndexesSupported: true,
+			Keyspace:         "nexus",
 		},
 		KeyspacesCqlStore: cassandra.KeyspacesConfig{
 			Keyspace: "nexus",

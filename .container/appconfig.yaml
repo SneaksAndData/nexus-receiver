@@ -2,12 +2,16 @@ astra-cql-store: # can be read from environment
   secure-connection-bundle-base64: ""
   gateway-user: ""
   gateway-password: ""
+  indexes-supported: true
+  keyspace: ""
 scylla-cql-store:
   hosts: []
   port: ""
   user: ""
   password: ""
   local-dc: ""
+  indexes-supported: true
+  keyspace: ""
 keyspaces-cql-store:
   hosts: []
   port: ""
