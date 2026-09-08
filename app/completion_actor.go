@@ -44,6 +44,10 @@ func completeRequest(input *models.CompletionInput, cqlStore store.CheckpointSto
 		return "", err
 	}
 
+	if requestToComplete == nil {
+		return "", nil
+	}
+
 	if requestToComplete.IsFinished() {
 		return requestToComplete.Id, nil
 	}

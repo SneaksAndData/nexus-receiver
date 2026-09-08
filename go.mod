@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.9.0
-	github.com/SneaksAndData/nexus-core v1.4.5-0.20260907122709-3a20cbfb2857
+	github.com/SneaksAndData/nexus-core v1.4.5-0.20260908112559-b4acfde897e0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/swaggo/swag v1.16.4
 	k8s.io/klog/v2 v2.140.0

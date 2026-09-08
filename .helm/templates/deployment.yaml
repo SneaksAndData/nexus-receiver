@@ -113,12 +113,12 @@ spec:
           {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-        {{- if .Values.extraEnvFrom }}
-          envFrom:          
+          envFrom:
           {{- if .Values.receiver.config.checkpointStore.secretRefEnabled }}
             - secretRef:
-                name: {{ required .Values.receiver.config.checkpointStore.secretName }}
+                name: {{ required ".Values.receiver.config.checkpointStore.secretName must be provided if checkpointStore.secretRefEnabled is true" .Values.receiver.config.checkpointStore.secretName }}
           {{- end }}
+        {{- if .Values.extraEnvFrom }}
           {{- with .Values.extraEnvFrom }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
