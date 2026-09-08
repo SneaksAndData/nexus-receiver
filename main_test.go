@@ -72,7 +72,9 @@ func TestSmoke_CheckRun_InitialState(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to perform GET %s: %v", url, err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
@@ -99,7 +101,9 @@ func TestSmoke_CheckRun_NotFound(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to perform GET %s: %v", url, err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusNotFound {
 		body, _ := io.ReadAll(resp.Body)
@@ -124,7 +128,9 @@ func TestSmoke_CompleteRun_And_CheckRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to perform POST %s: %v", completeURL, err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusAccepted {
 		body, _ := io.ReadAll(resp.Body)
@@ -147,13 +153,13 @@ func TestSmoke_CompleteRun_And_CheckRun(t *testing.T) {
 		}
 
 		if checkRespHttp.StatusCode != http.StatusOK {
-			checkRespHttp.Body.Close()
+			_ = checkRespHttp.Body.Close()
 			continue
 		}
 
 		var checkResult models.CheckRunResponse
 		decodeErr := json.NewDecoder(checkRespHttp.Body).Decode(&checkResult)
-		checkRespHttp.Body.Close()
+		_ = checkRespHttp.Body.Close()
 
 		if decodeErr == nil && checkResult.IsProcessed {
 			completed = true
@@ -175,7 +181,9 @@ func TestSmoke_CompleteRun_InvalidPayload(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to perform POST %s: %v", completeURL, err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusBadRequest {
 		body, _ := io.ReadAll(resp.Body)
