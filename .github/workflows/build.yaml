@@ -44,17 +44,14 @@ jobs:
         with:
           version: v2.12.2
 
-# uncomment when debugging actions
-#      - name: Get Compose Logs
-#        if: always()
-#        run: docker compose logs
+      - name: Setup integration tests
+        run: just up
 
       - name: Test
-        run: just test
-
-      - name: Teardown Compose Stack
-        if: always()
-        run: just compose-down
+        env:
+          APPLICATION_ENVIRONMENT: units
+          SCYLLA_STORE_LOCAL_ONLY: 1
+        run: just test-all
         
       - name: Check Coverage
         id: coverage
