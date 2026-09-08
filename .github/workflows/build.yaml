@@ -35,10 +35,7 @@ jobs:
         
       - name: Run go vet
         run: go vet ./...
-        
-      - name: Build and activate CI stack
-        run: just up
-        
+
       - name: Lint
         uses: golangci/golangci-lint-action@v9
         with:
