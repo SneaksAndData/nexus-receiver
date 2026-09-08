@@ -2,23 +2,36 @@ package app
 
 import (
 	"context"
-	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
-	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/store/cassandra"
+	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 )
 
 func getExpectedConfig() *ReceiverConfig {
 	return &ReceiverConfig{
-		AstraCqlStore: request.AstraBundleConfig{
+		AstraCqlStore: cassandra.AstraBundleConfig{
 			SecureConnectionBundleBase64: "base64value",
 			GatewayUser:                  "user",
 			GatewayPassword:              "password",
+			IndexesSupported:             false,
+			Keyspace:                     "nexus",
 		},
-		ScyllaCqlStore: request.ScyllaCqlStoreConfig{
-			Hosts: []string{"host1", "host2"},
+		ScyllaCqlStore: cassandra.ScyllaConfig{
+			Hosts:            []string{"host1", "host2"},
+			IndexesSupported: true,
+			Keyspace:         "nexus",
+		},
+		KeyspacesCqlStore: cassandra.KeyspacesConfig{
+			Keyspace: "nexus",
+			Hosts:    []string{"keyspaces.aws.com"},
+			Port:     "9042",
+			CaPath:   "/tmp/ca",
+			Region:   "us-east-1",
+			UseIRSA:  false,
 		},
 		CqlStoreType:               CqlStoreAstra,
 		FailureRateBaseDelay:       time.Millisecond * 100,

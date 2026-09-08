@@ -2,19 +2,21 @@ package app
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	coremodels "github.com/SneaksAndData/nexus-core/pkg/checkpoint/models"
-	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
+	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/store"
+	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/store/cassandra"
 	"github.com/SneaksAndData/nexus-core/pkg/pipeline"
 	"github.com/SneaksAndData/nexus-receiver/api/v1/models"
 	"k8s.io/klog/v2"
 	"k8s.io/klog/v2/ktesting"
-	"testing"
-	"time"
 )
 
 type fixture struct {
 	actor    *CompletionActor
-	cqlStore *request.CqlStore
+	cqlStore store.CheckpointStore
 	ctx      context.Context
 }
 
@@ -23,14 +25,17 @@ func newFixture(t *testing.T) *fixture {
 	f := &fixture{}
 
 	f.ctx = ctx
-	f.cqlStore = request.NewScyllaCqlStore(
-		klog.FromContext(ctx), &request.ScyllaCqlStoreConfig{
-			Hosts: []string{"127.0.0.1"},
+	f.cqlStore = cassandra.NewScyllaStore(
+		klog.FromContext(ctx), &cassandra.ScyllaConfig{
+			Hosts:            []string{"127.0.0.1"},
+			Port:             "30042",
+			Keyspace:         "nexus",
+			IndexesSupported: true,
 		})
 	f.actor = NewCompletionActor(f.ctx, f.cqlStore, &ReceiverConfig{
-		AstraCqlStore:              request.AstraBundleConfig{},
-		ScyllaCqlStore:             request.ScyllaCqlStoreConfig{},
-		CqlStoreType:               "scylla",
+		AstraCqlStore:              cassandra.AstraBundleConfig{},
+		ScyllaCqlStore:             cassandra.ScyllaConfig{},
+		CqlStoreType:               "cassandra-scylla",
 		FailureRateBaseDelay:       time.Second,
 		FailureRateMaxDelay:        time.Second * 2,
 		RateLimitElementsPerSecond: 10,
@@ -75,14 +80,19 @@ func TestCompletion(t *testing.T) {
 		t.FailNow()
 	}
 
+	resultsFound := 0
+
 	for result := range results {
 		if result.Id == "f47ac10b-58cc-4372-a567-0e02b2c3d479" && (result.ResultUri != "http://localhost:9000/data" || result.LifecycleStage != coremodels.LifecycleStageCompleted) {
-			t.Errorf("expected a completed checkpoint with result url http://localhost:9000/data, but got result url: %s, lifecycle stage: %s", result.ResultUri, result.LifecycleStage)
-			t.FailNow()
+			t.Fatalf("expected a completed checkpoint with result url http://localhost:9000/data, but got result url: %s, lifecycle stage: %s", result.ResultUri, result.LifecycleStage)
 		}
 		if result.Id == "2c7b6e8d-cc3c-4b5b-a3f6-5d7b9e2c7f2a" && (result.ResultUri != "" || result.LifecycleStage != coremodels.LifecycleStageFailed) {
-			t.Errorf("expected a failed checkpoint without a result url, but got result url: %s, lifecycle stage: %s", result.ResultUri, result.LifecycleStage)
-			t.FailNow()
+			t.Fatalf("expected a failed checkpoint without a result url, but got result url: %s, lifecycle stage: %s", result.ResultUri, result.LifecycleStage)
 		}
+		resultsFound++
+	}
+
+	if resultsFound != 2 {
+		t.Errorf("expected 2 results, got %d", resultsFound)
 	}
 }

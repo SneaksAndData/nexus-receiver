@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
+
 	nexusconf "github.com/SneaksAndData/nexus-core/pkg/configurations"
 	"github.com/SneaksAndData/nexus-core/pkg/signals"
 	"github.com/SneaksAndData/nexus-core/pkg/telemetry"
@@ -11,8 +14,6 @@ import (
 	"github.com/SneaksAndData/nexus-receiver/app"
 	"github.com/gin-gonic/gin"
 	"k8s.io/klog/v2"
-	"os"
-	"strconv"
 )
 
 func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine {
@@ -32,8 +33,10 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 		appServices = appServices.WithAstraCqlStore(ctx, &appConfig.AstraCqlStore)
 	case app.CqlStoreScylla:
 		appServices = appServices.WithScyllaCqlStore(ctx, &appConfig.ScyllaCqlStore)
+	case app.CqlStoreKeyspaces:
+		appServices = appServices.WithKeyspacesCqlStore(ctx, &appConfig.KeyspacesCqlStore)
 	default:
-		klog.FromContext(ctx).Error(errors.New("unknown store type "+appConfig.CqlStoreType), "failed to initialize a CqlStore")
+		klog.FromContext(ctx).Error(errors.New("unknown store type "+appConfig.CqlStoreType), "failed to initialize a Checkpoint Store")
 		klog.FlushAndExit(klog.ExitFlushTimeout, 1)
 	}
 
@@ -44,7 +47,7 @@ func setupRouter(ctx context.Context, appConfig *app.ReceiverConfig) *gin.Engine
 	apiV1 := router.Group("algorithm/v1")
 
 	apiV1.POST("complete/:algorithmName/requests/:requestId", v1.CompleteRun(appServices.CompletionActor(), logger))
-	apiV1.GET("check/:algorithmName/requests/:requestId", v1.CheckRun(appServices.CqlStore(), logger))
+	apiV1.GET("check/:algorithmName/requests/:requestId", v1.CheckRun(appServices.CheckpointStore(), logger))
 
 	go func() {
 		appServices.Start(ctx)

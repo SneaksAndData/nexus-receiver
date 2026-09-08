@@ -1,11 +1,12 @@
 package v1
 
 import (
-	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/request"
+	"net/http"
+
+	"github.com/SneaksAndData/nexus-core/pkg/checkpoint/store"
 	"github.com/SneaksAndData/nexus-receiver/api/v1/models"
 	"github.com/gin-gonic/gin"
 	"k8s.io/klog/v2"
-	"net/http"
 )
 
 // CheckRun godoc
@@ -23,7 +24,7 @@ import (
 //	@Failure		404	{string}	string
 //	@Failure		401	{string}	string
 //	@Router			/algorithm/v1/check/{algorithmName}/requests/{requestId} [get]
-func CheckRun(cqlStore *request.CqlStore, logger klog.Logger) gin.HandlerFunc {
+func CheckRun(cqlStore store.CheckpointStore, logger klog.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		algorithmName := ctx.Param("algorithmName")
 		requestId := ctx.Param("requestId")
