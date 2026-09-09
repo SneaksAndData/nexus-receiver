@@ -4,8 +4,9 @@ go 1.26.0
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.9.0
-	github.com/SneaksAndData/nexus-core v1.4.5-0.20260908112559-b4acfde897e0
+	github.com/SneaksAndData/nexus-core v1.4.5-0.20260909143802-1a5600268e56
 	github.com/gin-gonic/gin v1.10.0
+	github.com/google/uuid v1.6.0
 	github.com/swaggo/swag v1.16.4
 	k8s.io/klog/v2 v2.140.0
 )
@@ -68,7 +69,6 @@ require (
 	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/gocql/gocql v1.7.0 // indirect
 	github.com/google/gnostic-models v0.7.1 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.18.6 // indirect

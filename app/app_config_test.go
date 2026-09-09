@@ -28,7 +28,7 @@ func getExpectedConfig() *ReceiverConfig {
 		KeyspacesCqlStore: cassandra.KeyspacesConfig{
 			Keyspace: "nexus",
 			Hosts:    []string{"keyspaces.aws.com"},
-			Port:     "9042",
+			Port:     9042,
 			CaPath:   "/tmp/ca",
 			Region:   "us-east-1",
 			UseIRSA:  false,
